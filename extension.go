@@ -10,6 +10,21 @@ type Extension struct {
 	Data           []byte     `xml:",innerxml"`
 }
 
+//CreativeExtension type
+type CreativeExtension struct {
+	Extension
+}
+
+//Extensions type
+type Extensions struct {
+	Extension []Extension
+}
+
+//CreativeExtensions type
+type CreativeExtensions struct {
+	CreativeExtension []CreativeExtension
+}
+
 // the extension type as a middleware in the encoding process.
 type extension Extension
 

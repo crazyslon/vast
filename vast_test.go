@@ -43,35 +43,38 @@ func TestCreativeExtensions(t *testing.T) {
 		assert.Equal(t, "abc123", ad.ID)
 		if assert.NotNil(t, ad.InLine) {
 			if assert.Len(t, ad.InLine.Creatives, 1) {
-				if assert.Len(t, ad.InLine.Creatives[0].CreativeExtensions, 4) {
-					var ext Extension
-					// asserting first extension
-					ext = ad.InLine.Creatives[0].CreativeExtensions[0]
-					assert.Equal(t, "geo", ext.Type)
-					assert.Empty(t, ext.CustomTracking)
-					assert.Equal(t, "\n              <Country>US</Country>\n              <Bandwidth>3</Bandwidth>\n              <BandwidthKbps>1680</BandwidthKbps>\n            ", string(ext.Data))
-					// asserting second extension
-					ext = ad.InLine.Creatives[0].CreativeExtensions[1]
-					assert.Equal(t, "activeview", ext.Type)
-					if assert.Len(t, ext.CustomTracking, 2) {
-						// first tracker
-						assert.Equal(t, "viewable_impression", ext.CustomTracking[0].Event)
-						assert.Equal(t, "https://pubads.g.doubleclick.net/pagead/conversion/?ai=test&label=viewable_impression&acvw=[VIEWABILITY]&gv=[GOOGLE_VIEWABILITY]&ad_mt=[AD_MT]", ext.CustomTracking[0].URI)
-						// second tracker
-						assert.Equal(t, "abandon", ext.CustomTracking[1].Event)
-						assert.Equal(t, "https://pubads.g.doubleclick.net/pagead/conversion/?ai=test&label=video_abandon&acvw=[VIEWABILITY]&gv=[GOOGLE_VIEWABILITY]", ext.CustomTracking[1].URI)
+				if assert.NotNil(t, ad.InLine.Creatives[0].CreativeExtensions) {
+					if assert.Len(t, ad.InLine.Creatives[0].CreativeExtensions.CreativeExtension, 4) {
+						creativeExtentions := ad.InLine.Creatives[0].CreativeExtensions.CreativeExtension
+						var ext CreativeExtension
+						// asserting first extension
+						ext = creativeExtentions[0]
+						assert.Equal(t, "geo", ext.Type)
+						assert.Empty(t, ext.CustomTracking)
+						assert.Equal(t, "<Country>US</Country><Bandwidth>3</Bandwidth><BandwidthKbps>1680</BandwidthKbps>", string(ext.Data))
+						// asserting second extension
+						ext = creativeExtentions[1]
+						assert.Equal(t, "activeview", ext.Type)
+						if assert.Len(t, ext.CustomTracking, 2) {
+							// first tracker
+							assert.Equal(t, "viewable_impression", ext.CustomTracking[0].Event)
+							assert.Equal(t, "https://pubads.g.doubleclick.net/pagead/conversion/?ai=test&label=viewable_impression&acvw=[VIEWABILITY]&gv=[GOOGLE_VIEWABILITY]&ad_mt=[AD_MT]", ext.CustomTracking[0].URI)
+							// second tracker
+							assert.Equal(t, "abandon", ext.CustomTracking[1].Event)
+							assert.Equal(t, "https://pubads.g.doubleclick.net/pagead/conversion/?ai=test&label=video_abandon&acvw=[VIEWABILITY]&gv=[GOOGLE_VIEWABILITY]", ext.CustomTracking[1].URI)
+						}
+						assert.Empty(t, string(ext.Data))
+						// asserting third extension
+						ext = creativeExtentions[2]
+						assert.Equal(t, "DFP", ext.Type)
+						assert.Empty(t, ext.CustomTracking)
+						assert.Equal(t, "<SkippableAdType>Generic</SkippableAdType>", string(ext.Data))
+						// asserting fourth extension
+						ext = creativeExtentions[3]
+						assert.Equal(t, "metrics", ext.Type)
+						assert.Empty(t, ext.CustomTracking)
+						assert.Equal(t, "<FeEventId>MubmWKCWLs_tiQPYiYrwBw</FeEventId><AdEventId>CIGpsPCTkdMCFdN-Ygod-xkCKQ</AdEventId>", string(ext.Data))
 					}
-					assert.Empty(t, string(ext.Data))
-					// asserting third extension
-					ext = ad.InLine.Creatives[0].CreativeExtensions[2]
-					assert.Equal(t, "DFP", ext.Type)
-					assert.Empty(t, ext.CustomTracking)
-					assert.Equal(t, "\n              <SkippableAdType>Generic</SkippableAdType>\n            ", string(ext.Data))
-					// asserting fourth extension
-					ext = ad.InLine.Creatives[0].CreativeExtensions[3]
-					assert.Equal(t, "metrics", ext.Type)
-					assert.Empty(t, ext.CustomTracking)
-					assert.Equal(t, "\n              <FeEventId>MubmWKCWLs_tiQPYiYrwBw</FeEventId>\n              <AdEventId>CIGpsPCTkdMCFdN-Ygod-xkCKQ</AdEventId>\n            ", string(ext.Data))
 				}
 			}
 		}
@@ -90,15 +93,15 @@ func TestInlineExtensions(t *testing.T) {
 		assert.Equal(t, "708365173", ad.ID)
 		if assert.NotNil(t, ad.InLine) {
 			if assert.NotNil(t, ad.InLine.Extensions) {
-				if assert.Len(t, ad.InLine.Extensions, 4) {
+				if assert.Len(t, ad.InLine.Extensions.Extension, 4) {
 					var ext Extension
 					// asserting first extension
-					ext = ad.InLine.Extensions[0]
+					ext = ad.InLine.Extensions.Extension[0]
 					assert.Equal(t, "geo", ext.Type)
 					assert.Empty(t, ext.CustomTracking)
-					assert.Equal(t, "\n          <Country>US</Country>\n          <Bandwidth>3</Bandwidth>\n          <BandwidthKbps>1680</BandwidthKbps>\n        ", string(ext.Data))
+					assert.Equal(t, "<Country>US</Country><Bandwidth>3</Bandwidth><BandwidthKbps>1680</BandwidthKbps>", string(ext.Data))
 					// asserting second extension
-					ext = ad.InLine.Extensions[1]
+					ext = ad.InLine.Extensions.Extension[1]
 					assert.Equal(t, "activeview", ext.Type)
 					if assert.Len(t, ext.CustomTracking, 2) {
 						// first tracker
@@ -110,14 +113,14 @@ func TestInlineExtensions(t *testing.T) {
 					}
 					assert.Empty(t, string(ext.Data))
 					// asserting third extension
-					ext = ad.InLine.Extensions[2]
+					ext = ad.InLine.Extensions.Extension[2]
 					assert.Equal(t, "DFP", ext.Type)
-					assert.Equal(t, "\n          <SkippableAdType>Generic</SkippableAdType>\n        ", string(ext.Data))
+					assert.Equal(t, "<SkippableAdType>Generic</SkippableAdType>", string(ext.Data))
 					assert.Empty(t, ext.CustomTracking)
 					// asserting fourth extension
-					ext = ad.InLine.Extensions[3]
+					ext = ad.InLine.Extensions.Extension[3]
 					assert.Equal(t, "metrics", ext.Type)
-					assert.Equal(t, "\n          <FeEventId>MubmWKCWLs_tiQPYiYrwBw</FeEventId>\n          <AdEventId>CIGpsPCTkdMCFdN-Ygod-xkCKQ</AdEventId>\n        ", string(ext.Data))
+					assert.Equal(t, "<FeEventId>MubmWKCWLs_tiQPYiYrwBw</FeEventId><AdEventId>CIGpsPCTkdMCFdN-Ygod-xkCKQ</AdEventId>", string(ext.Data))
 					assert.Empty(t, ext.CustomTracking)
 				}
 			}
@@ -519,13 +522,15 @@ func TestSpotXVpaid(t *testing.T) {
 				}
 
 			}
-			if assert.Len(t, inline.Extensions, 2) {
-				ext1 := inline.Extensions[0]
-				assert.Equal(t, "LR-Pricing", ext1.Type)
-				assert.Equal(t, "<Price model=\"CPM\" currency=\"USD\" source=\"spotxchange\"><![CDATA[3.06]]></Price>", strings.TrimSpace(string(ext1.Data)))
-				ext2 := inline.Extensions[1]
-				assert.Equal(t, "SpotX-Count", ext2.Type)
-				assert.Equal(t, "<total_available><![CDATA[1]]></total_available>", strings.TrimSpace(string(ext2.Data)))
+			if assert.NotNil(t, inline.Extensions) {
+				if assert.Len(t, inline.Extensions.Extension, 2) {
+					ext1 := inline.Extensions.Extension[0]
+					assert.Equal(t, "LR-Pricing", ext1.Type)
+					assert.Equal(t, "<Price model=\"CPM\" currency=\"USD\" source=\"spotxchange\"><![CDATA[3.06]]></Price>", strings.TrimSpace(string(ext1.Data)))
+					ext2 := inline.Extensions.Extension[1]
+					assert.Equal(t, "SpotX-Count", ext2.Type)
+					assert.Equal(t, "<total_available><![CDATA[1]]></total_available>", strings.TrimSpace(string(ext2.Data)))
+				}
 			}
 		}
 	}
@@ -586,7 +591,7 @@ func TestIcons(t *testing.T) {
 			assert.Equal(t, "Adap.tv", inline.AdSystem.Name)
 			assert.Equal(t, "1.0", inline.AdSystem.Version)
 			assert.Equal(t, "Adap.tv Ad Unit", inline.AdTitle.CDATA)
-			assert.Equal(t, "", inline.Description.CDATA)
+			assert.Nil(t, inline.Description)
 
 			if assert.Len(t, inline.Creatives, 1) {
 				crea1 := inline.Creatives[0]
